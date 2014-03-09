@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
-
-# <codecell>
-
 from __future__ import division
 import numpy as np
 import pandas as pd
@@ -10,8 +6,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from pandas import DataFrame, Series
 import math
-
-# <codecell>
+import random
 
 # when k is an even number, it is likely that we can't decide the class of a test tuple, then we skip the even number of k.
 
@@ -21,19 +16,14 @@ def calculate_distance(test_row, train_data):
     for i in train_data.index:
         distance = sum((test_row - train_data[test_data_columns].ix[i])**2)
         distance_list.append(distance)
-    # print distance_list
     return distance_list
 
 def predict(test_row, train_data, k):
     train_data.index = np.arange(0, len(train_data))
     distance_list = calculate_distance(test_row, train_data)
     min_k_distance = sorted(distance_list)[:k]
-    # print min_k_distance
     min_k_distance_index = [distance_list.index(dist) for dist in min_k_distance]
-    # print min_k_distance_index
-    nn_class = [train_data.ix[distance_list.index(dist), 'class'] for dist in min_k_distance] 
-    # print nn_class
-    # return the majority class
+    nn_class = [train_data.ix[distance_list.index(dist), 'class'] for dist in min_k_distance]
     return max(set(nn_class), key = nn_class.count) 
     
     
@@ -52,16 +42,18 @@ if __name__ == '__main__':
     train_columns = test_columns + ['class']
     
     df_pre = analysis_data[test_columns]
+    
     # normalized data
     df = (df_pre - df_pre.min(axis = 0)) / (df_pre.max(axis = 0) - df_pre.min(axis = 0))
     df['class'] = Series(analysis_data['class'], index = df.index)
     
     df_index_range = df.index.values
-    # print df_index_range
+    random.shuffle(df_index_range)
+ 
     fold_range_list = []
-    
     fold_mark = 0
     fold_value_num = int(len(df_index_range) / 10) + 1
+    
     while fold_mark < len(df_index_range):
         fold_mark_right = (fold_mark + fold_value_num)
         if fold_mark_right >= len(df_index_range):
@@ -71,11 +63,7 @@ if __name__ == '__main__':
     
     k_list = np.arange(1, 12, 2)
     average_result = []
-    
-#     print k_list
-#     print 'predicted class', predict(df.ix[4, test_columns], df[57:], 1)
-#     print 'true class:', df.ix[4, 'class']
-    
+
     for k in k_list:
         print 'k is: ', k
         knn_accuracy_list = []
@@ -121,11 +109,7 @@ if __name__ == '__main__':
     axes[1].tick_params(axis='y', labelsize=11)
     
     plt.subplots_adjust(left = 0.18, right = 0.92, hspace = 0.4)
-    plt.savefig('assign5_1_plot.pdf')
-    
+    plt.savefig('knn_result_plot.pdf')
 
-    
-
-# <codecell>
 
 
