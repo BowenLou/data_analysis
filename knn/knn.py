@@ -47,7 +47,7 @@ if __name__ == '__main__':
     df = (df_pre - df_pre.min(axis = 0)) / (df_pre.max(axis = 0) - df_pre.min(axis = 0))
     df['class'] = Series(analysis_data['class'], index = df.index)
     
-    df_index_range = df.index.values
+    df_index_range = list(df.index)
     random.shuffle(df_index_range)
  
     fold_range_list = []
